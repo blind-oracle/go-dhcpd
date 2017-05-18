@@ -1,0 +1,50 @@
+server_id = "dhcp-1"
+
+[log]
+syslog = "local"
+level = "DEBUG"
+tickers = true
+
+[mysql]
+dsn = "raduser:radpass@tcp(10.1.241.110:3306)/radiusdb"
+
+[http]
+listen = [ "0.0.0.0:8067" ]
+
+[metrics]
+enable = true
+hosts = [ "10.1.253.172:8093", "10.1.253.172:8094" ]
+measurement_requests = "dhcp_requests"
+measurement_stats = "dhcp_stats"
+measurement_stats_segment = "dhcp_stats_segment"
+measurement_cleanup = "dhcp_cleanup"
+
+[dhcp]
+listen = [ "0.0.0.0" ]
+grace_ttl = "5s"
+random_tries = 5
+buffer_size = 4194304
+cleanup_interval = "60s"
+cleanup_age = "60m"
+stats_interval = "1s"
+
+[aerospike]
+hosts = [ "10.1.241.91", "10.1.241.92", "10.1.241.93", "10.1.241.94" ]
+scan_timeout = "30s"
+namespace = "onlinedb"
+set_leases = "dhcp_leases"
+set_subnets = "dhcp_subnets"
+
+[segments.segment1]
+id = 1
+detect_rule = "[RelayIP] == 10.1.241.110"
+dns_random = true
+
+[segments.segment1.automode]
+enable = true
+mask = "255.255.248.0"
+range_start = "0.0.0.1"
+range_end = "0.0.7.250"
+router = "0.0.7.254"
+dns = [ "10.1.1.10", "10.1.1.11" ]
+lease_ttl = "300s"
